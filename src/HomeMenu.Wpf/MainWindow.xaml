@@ -1,0 +1,81 @@
+<Window x:Class="HomeMenu.Wpf.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="HomeMenu — домашнее меню" Width="1320" Height="900" MinWidth="1050" MinHeight="730" WindowStartupLocation="CenterScreen" Closing="OnClosing" Closed="OnClosed">
+ <Window.Resources>
+  <DataTemplate x:Key="MealCard">
+   <Button Content="{Binding Caption}" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" MinHeight="104" Padding="12" Margin="4" Background="#EDF3E9" BorderBrush="#C7D8C6"
+     Command="{Binding DataContext.SelectMeal, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}">
+    <Button.ContentTemplate><DataTemplate><TextBlock Text="{Binding}" FontSize="12" TextWrapping="Wrap"/></DataTemplate></Button.ContentTemplate>
+   </Button>
+  </DataTemplate>
+ </Window.Resources>
+ <DockPanel Margin="24,20">
+  <Grid DockPanel.Dock="Top" Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel><TextBlock Text="HOME / MENU" FontWeight="Bold" Foreground="{StaticResource Accent}"/><TextBlock Text="Домашнее меню" FontSize="28" FontWeight="SemiBold"/></StackPanel>
+   <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="{Binding UserName}" Margin="0,10,20,0"/><Button Content="Обновить" Command="{Binding Refresh}"/><Button Content="Выйти" Command="{Binding Logout}"/></StackPanel>
+  </Grid>
+  <Border DockPanel.Dock="Bottom" Background="#E7EEE4" Padding="12" Margin="0,12,0,0"><DockPanel><Button DockPanel.Dock="Right" Content="Отменить подбор" Command="{Binding CancelSearch}" Visibility="{Binding IsSearching, Converter={StaticResource BoolVisibility}}" Margin="12,0,0,0"/><TextBlock Text="{Binding Status}" VerticalAlignment="Center"/></DockPanel></Border>
+  <TabControl IsEnabled="{Binding Idle}" Background="Transparent" BorderThickness="0">
+   <TabItem Header="Профиль"><Grid Margin="18"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="400"/></Grid.ColumnDefinitions>
+    <StackPanel Margin="0,0,24,0"><TextBlock Text="Параметры и нормы" Style="{StaticResource Heading}"/><Border Style="{StaticResource Card}"><TextBlock Text="{Binding ProfileText}" LineHeight="28"/></Border><Button Content="Изменить профиль" Command="{Binding EditProfile}" HorizontalAlignment="Left" Style="{StaticResource Primary}"/>
+     <TextBlock Text="План рассчитан на одного человека: семь дней, три приема пищи в день. Каждый рецепт описывает одну порцию. Цели БЖУ используются для сравнения; генератор ограничивает калорийность и полную стоимость недели." Foreground="#66786A" Margin="0,18"/>
+     <TextBlock Text="Цены и пищевые значения начального каталога — учебные. Продукты, остатки и состав рецептов учитываются в граммах, цены — в BYN за 100 г." Foreground="#66786A"/>
+    </StackPanel>
+    <DockPanel Grid.Column="1"><StackPanel DockPanel.Dock="Top"><TextBlock Text="Исключения" Style="{StaticResource Heading}"/><TextBlock Text="Отмеченные продукты запрещены при подборе, замене и приготовлении." Margin="0,0,0,12"/><Button Content="Сохранить исключения" Command="{Binding SavePreferences}"/></StackPanel>
+     <ListBox ItemsSource="{Binding Preferences}" BorderThickness="0"><ListBox.ItemTemplate><DataTemplate><CheckBox Content="{Binding Product.Name}" IsChecked="{Binding Excluded}" Margin="8"/></DataTemplate></ListBox.ItemTemplate></ListBox>
+    </DockPanel>
+   </Grid></TabItem>
+   <TabItem Header="Продукты"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Общий каталог продуктов" Style="{StaticResource Heading}"/><TextBlock Text="Показатели и цена за 100 г. Каталог общий для всех учетных записей этой установки." Margin="0,0,0,12"/>
+     <WrapPanel><StackPanel><TextBlock Text="Название"/><TextBox Text="{Binding ProductSearch}" Width="240"/></StackPanel><StackPanel><TextBlock Text="Категория"/><TextBox Text="{Binding CategorySearch}" Width="200"/></StackPanel><Button Content="Найти" Command="{Binding SearchProducts}" VerticalAlignment="Bottom"/></WrapPanel>
+     <WrapPanel><Button Content="Добавить" Command="{Binding AddProduct}" Style="{StaticResource Primary}"/><Button Content="Изменить" Command="{Binding EditProduct}"/><Button Content="Удалить" Command="{Binding DeleteProduct}"/><TextBlock Text="Нет строк — продукты не найдены." Foreground="#66786A" Margin="12,8"/></WrapPanel>
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}"><DataGrid.Columns>
+     <DataGridTextColumn Header="Продукт" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="170"/>
+     <DataGridTextColumn Header="Ккал" Binding="{Binding CaloriesPer100g, StringFormat=F2}" Width="85"/><DataGridTextColumn Header="Белки, г" Binding="{Binding ProteinPer100g, StringFormat=F2}" Width="85"/><DataGridTextColumn Header="Жиры, г" Binding="{Binding FatPer100g, StringFormat=F2}" Width="85"/><DataGridTextColumn Header="Углеводы, г" Binding="{Binding CarbsPer100g, StringFormat=F2}" Width="100"/><DataGridTextColumn Header="BYN / 100 г" Binding="{Binding PricePer100g, StringFormat=F4}" Width="110"/>
+    </DataGrid.Columns></DataGrid>
+   </DockPanel></TabItem>
+   <TabItem Header="Рецепты"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Общий каталог рецептов" Style="{StaticResource Heading}"/>
+     <WrapPanel><StackPanel><TextBlock Text="Название"/><TextBox Text="{Binding RecipeSearch}" Width="210"/></StackPanel><StackPanel><TextBlock Text="Прием пищи"/><ComboBox ItemsSource="{Binding MealFilters}" SelectedItem="{Binding MealFilter}" Width="160"/></StackPanel><StackPanel><TextBlock Text="Содержит продукт"/><ComboBox ItemsSource="{Binding AllProducts}" SelectedItem="{Binding IngredientFilter}" Width="210"/></StackPanel><StackPanel><TextBlock Text="Цена до, BYN"/><TextBox Text="{Binding MaxPrice}" Width="110"/></StackPanel><Button Content="Найти" Command="{Binding SearchRecipes}" VerticalAlignment="Bottom"/><Button Content="Сбросить" Command="{Binding ResetRecipeFilters}" VerticalAlignment="Bottom"/></WrapPanel>
+     <WrapPanel><Button Content="Добавить" Command="{Binding AddRecipe}" Style="{StaticResource Primary}"/><Button Content="Изменить" Command="{Binding EditRecipe}"/><Button Content="Удалить" Command="{Binding DeleteRecipe}"/></WrapPanel>
+    </StackPanel>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="400"/></Grid.ColumnDefinitions>
+     <DataGrid ItemsSource="{Binding Recipes}" SelectedItem="{Binding SelectedRecipe}" Margin="0,0,14,0"><DataGrid.Columns><DataGridTextColumn Header="Рецепт / одна порция" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Прием" Binding="{Binding Meal}" Width="90"/><DataGridTextColumn Header="Ккал" Binding="{Binding Nutrition.Calories, StringFormat=F2}" Width="80"/><DataGridTextColumn Header="BYN" Binding="{Binding Nutrition.Cost, Converter={StaticResource Money}}" Width="70"/></DataGrid.Columns></DataGrid>
+     <Border Grid.Column="1" Style="{StaticResource Card}"><ScrollViewer VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding RecipeDetails}" LineHeight="24"/></ScrollViewer></Border>
+    </Grid>
+   </DockPanel></TabItem>
+   <TabItem Header="Холодильник"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Продукты дома" Style="{StaticResource Heading}"/><TextBlock Text="Каждая строка — отдельная партия. Просроченные партии сохраняются в учете, но не используются. Покупки добавляйте сюда вручную." Margin="0,0,0,16"/>
+     <WrapPanel><Button Content="Добавить партию" Command="{Binding AddLot}" Style="{StaticResource Primary}"/><Button Content="Изменить" Command="{Binding EditLot}"/><Button Content="Удалить" Command="{Binding DeleteLot}"/></WrapPanel>
+    </StackPanel>
+    <DataGrid ItemsSource="{Binding Pantry}" SelectedItem="{Binding SelectedStock}"><DataGrid.Columns><DataGridTextColumn Header="Продукт" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Количество, г" Binding="{Binding Grams, StringFormat=F2}" Width="150"/><DataGridTextColumn Header="Годен до" Binding="{Binding Expiry}" Width="150"/><DataGridTextColumn Header="Состояние" Binding="{Binding State}" Width="200"/><DataGridTextColumn Header="Расчетная цена / 100 г" Binding="{Binding Price, StringFormat=F4}" Width="190"/></DataGrid.Columns></DataGrid>
+   </DockPanel></TabItem>
+   <TabItem Header="Меню на неделю"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Ваша неделя" Style="{StaticResource Heading}"/>
+     <WrapPanel><StackPanel><TextBlock Text="Понедельник"/><DatePicker SelectedDate="{Binding Week}" Width="155" Margin="0,4,12,10" Padding="4"/></StackPanel><Button Content="Открыть" Command="{Binding LoadWeek}" VerticalAlignment="Bottom"/><StackPanel><TextBlock Text="Режим цели"/><CheckBox IsChecked="{Binding UseCustomTarget}" Content="Своя цель (иначе профиль)" Margin="0,12,14,14"/></StackPanel><StackPanel><TextBlock Text="Ккал / день"/><TextBox Text="{Binding Target}" IsEnabled="{Binding UseCustomTarget}" Width="110"/></StackPanel><StackPanel><TextBlock Text="Бюджет недели, BYN"/><TextBox Text="{Binding Budget}" Width="155"/></StackPanel><Button Content="Подобрать меню" Command="{Binding Generate}" Style="{StaticResource Primary}" VerticalAlignment="Bottom"/></WrapPanel>
+     <TextBlock Text="{Binding PlanHeader}" FontWeight="SemiBold" Margin="0,4,0,10"/>
+     <TextBlock Text="{Binding Warnings}" Foreground="#AD3E30" Margin="0,0,0,8"/>
+    </StackPanel>
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="300"/></Grid.ColumnDefinitions>
+     <DockPanel Margin="0,0,12,0">
+      <Grid DockPanel.Dock="Top" Margin="0,0,0,4"><Grid.ColumnDefinitions><ColumnDefinition Width="80"/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Grid.Column="1" Text="ЗАВТРАК" Margin="12,0"/><TextBlock Grid.Column="2" Text="ОБЕД" Margin="12,0"/><TextBlock Grid.Column="3" Text="УЖИН" Margin="12,0"/></Grid>
+      <ScrollViewer VerticalScrollBarVisibility="Auto"><ItemsControl ItemsSource="{Binding Days}"><ItemsControl.ItemTemplate><DataTemplate>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="80"/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontSize="12"/><ContentControl Grid.Column="1" Content="{Binding Breakfast}" ContentTemplate="{StaticResource MealCard}" HorizontalContentAlignment="Stretch"/><ContentControl Grid.Column="2" Content="{Binding Lunch}" ContentTemplate="{StaticResource MealCard}" HorizontalContentAlignment="Stretch"/><ContentControl Grid.Column="3" Content="{Binding Dinner}" ContentTemplate="{StaticResource MealCard}" HorizontalContentAlignment="Stretch"/>
+       </Grid>
+      </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+     </DockPanel>
+     <DockPanel Grid.Column="1"><StackPanel DockPanel.Dock="Bottom" Margin="0,12,0,0"><Button Content="Заменить блюдо" Command="{Binding Replace}"/><Button Content="Подтвердить приготовление" Command="{Binding Cook}" Style="{StaticResource Primary}"/></StackPanel><Border Style="{StaticResource Card}"><ScrollViewer VerticalScrollBarVisibility="Auto"><TextBlock Text="{Binding MealDetails}" LineHeight="23"/></ScrollViewer></Border></DockPanel>
+    </Grid>
+   </DockPanel></TabItem>
+   <TabItem Header="Покупки"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Что нужно докупить" Style="{StaticResource Heading}"/><TextBlock Text="{Binding ShoppingHeader}" FontWeight="SemiBold" Margin="0,0,0,12"/><TextBlock Text="Список относится к неделе, открытой в меню. Запасы распределены однократно с учетом срока годности на день блюда. Расчет не резервирует продукты для других недель." Margin="0,0,0,12"/><Button Content="Пересчитать" Command="{Binding LoadWeek}" HorizontalAlignment="Left"/></StackPanel>
+    <DataGrid ItemsSource="{Binding Shopping}"><DataGrid.Columns><DataGridTextColumn Header="Категория" Binding="{Binding Category}" Width="140"/><DataGridTextColumn Header="Продукт" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Нужно, г" Binding="{Binding Required, StringFormat=F2}" Width="120"/><DataGridTextColumn Header="Покрыто, г" Binding="{Binding Covered, StringFormat=F2}" Width="120"/><DataGridTextColumn Header="Купить, г" Binding="{Binding Missing, StringFormat=F2}" Width="120"/><DataGridTextColumn Header="BYN / 100 г" Binding="{Binding Price, StringFormat=F4}" Width="115"/><DataGridTextColumn Header="Сумма, BYN" Binding="{Binding Cost, Converter={StaticResource Money}}" Width="120"/></DataGrid.Columns></DataGrid>
+   </DockPanel></TabItem>
+   <TabItem Header="Статистика"><DockPanel Margin="18">
+    <StackPanel DockPanel.Dock="Top"><TextBlock Text="Питание и бюджет" Style="{StaticResource Heading}"/><TextBlock Text="Открытая неделя меню. Отклонения Δ показаны в ккал и граммах от сохраненной суточной цели." Margin="0,0,0,12"/><Border Style="{StaticResource Card}"><TextBlock Text="{Binding SummaryText}" LineHeight="25"/></Border><TextBlock Text="{Binding Warnings}" Foreground="#AD3E30" Margin="0,0,0,10"/></StackPanel>
+    <StackPanel DockPanel.Dock="Bottom"><TextBlock Text="Подтверждения приготовления не являются независимо измеренным потреблением. Стоимость меню включает все ингредиенты, стоимость закупки — только дефицит по текущим ценам." Foreground="#66786A" Margin="0,12"/></StackPanel>
+    <DataGrid ItemsSource="{Binding Statistics}"><DataGrid.Columns><DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="105"/><DataGridTextColumn Header="Ккал" Binding="{Binding Nutrition.Calories, StringFormat=F2}" Width="100"/><DataGridTextColumn Header="Белки, г" Binding="{Binding Nutrition.Protein, StringFormat=F2}" Width="95"/><DataGridTextColumn Header="Жиры, г" Binding="{Binding Nutrition.Fat, StringFormat=F2}" Width="95"/><DataGridTextColumn Header="Углеводы, г" Binding="{Binding Nutrition.Carbs, StringFormat=F2}" Width="100"/><DataGridTextColumn Header="Δ ккал" Binding="{Binding CalorieDeviation, StringFormat=F2}" Width="100"/><DataGridTextColumn Header="Δ Б, г" Binding="{Binding ProteinDeviation, StringFormat=F2}" Width="95"/><DataGridTextColumn Header="Δ Ж, г" Binding="{Binding FatDeviation, StringFormat=F2}" Width="95"/><DataGridTextColumn Header="Δ У, г" Binding="{Binding CarbsDeviation, StringFormat=F2}" Width="95"/><DataGridTextColumn Header="BYN" Binding="{Binding Nutrition.Cost, Converter={StaticResource Money}}" Width="*"/></DataGrid.Columns></DataGrid>
+   </DockPanel></TabItem>
+  </TabControl>
+ </DockPanel>
+</Window>

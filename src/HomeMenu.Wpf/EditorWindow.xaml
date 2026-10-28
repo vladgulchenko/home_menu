@@ -1,0 +1,28 @@
+<Window x:Class="HomeMenu.Wpf.EditorWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="{Binding Title}" Width="680" Height="760" MinWidth="560" MinHeight="450" WindowStartupLocation="CenterOwner" Closing="OnClosing">
+ <DockPanel Margin="24">
+  <StackPanel DockPanel.Dock="Bottom"><TextBlock Text="{Binding Error}" Foreground="#AD3E30" Margin="0,10"/><StackPanel Orientation="Horizontal"><Button Content="Сохранить" Command="{Binding Save}" Style="{StaticResource Primary}"/><Button Content="Отмена" Click="Cancel"/></StackPanel></StackPanel>
+  <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+   <TextBlock Text="{Binding Title}" Style="{StaticResource Heading}"/>
+   <ItemsControl ItemsSource="{Binding Fields}"><ItemsControl.ItemTemplate><DataTemplate>
+    <StackPanel><TextBlock Text="{Binding Label}"/>
+     <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="{Binding IsMultiline}" TextWrapping="Wrap">
+      <TextBox.Style><Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}"><Style.Triggers><DataTrigger Binding="{Binding IsChoice}" Value="True"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger><DataTrigger Binding="{Binding IsMultiline}" Value="True"><Setter Property="MinHeight" Value="100"/></DataTrigger></Style.Triggers></Style></TextBox.Style>
+     </TextBox>
+     <ComboBox ItemsSource="{Binding Choices}" SelectedItem="{Binding Selected}" Visibility="{Binding IsChoice, Converter={StaticResource BoolVisibility}}"/>
+    </StackPanel>
+   </DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+   <StackPanel Visibility="{Binding HasIngredients, Converter={StaticResource BoolVisibility}}">
+    <TextBlock Text="Ингредиенты на одну порцию (граммы)" FontWeight="SemiBold" Margin="0,8"/>
+    <DataGrid ItemsSource="{Binding Ingredients}" SelectedItem="{Binding SelectedIngredient}" IsReadOnly="False" Height="220" RowHeight="58">
+     <DataGrid.Columns>
+      <DataGridTemplateColumn Header="Продукт" Width="*"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+       <ComboBox ItemsSource="{Binding DataContext.Products, RelativeSource={RelativeSource AncestorType=Window}}" SelectedItem="{Binding Product, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name"/>
+      </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+      <DataGridTemplateColumn Header="Вес, г" Width="120"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBox Text="{Binding Grams, UpdateSourceTrigger=PropertyChanged}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+     </DataGrid.Columns>
+    </DataGrid>
+    <StackPanel Orientation="Horizontal" Margin="0,8"><Button Content="Добавить строку" Command="{Binding AddIngredient}"/><Button Content="Убрать строку" Command="{Binding RemoveIngredient}"/></StackPanel>
+   </StackPanel>
+  </StackPanel></ScrollViewer>
+ </DockPanel>
+</Window>

@@ -1,0 +1,17 @@
+<Window x:Class="HomeMenu.Wpf.AuthWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="HomeMenu — вход" Width="500" Height="710" MinHeight="600" WindowStartupLocation="CenterScreen" Closing="OnClosing">
+ <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="42,32">
+  <TextBlock Text="HOME / MENU" Foreground="{StaticResource Accent}" FontWeight="Bold" FontSize="16" Margin="0,0,0,22"/>
+  <TextBlock Text="Домашнее меню" FontSize="30" FontWeight="SemiBold"/>
+  <TextBlock Text="Планируйте неделю, используйте запасы и считайте покупки." Foreground="#66786A" Margin="0,8,0,22"/>
+  <TextBlock Text="Логин"/><TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="Login"/>
+  <TextBlock Text="Пароль"/><PasswordBox PasswordChanged="PasswordChanged" AutomationProperties.AutomationId="Password"/>
+  <StackPanel Visibility="{Binding IsRegistration, Converter={StaticResource BoolVisibility}}">
+   <TextBlock Text="Имя"/><TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="DisplayName"/>
+   <TextBlock Text="Повтор пароля"/><PasswordBox PasswordChanged="RepeatChanged" AutomationProperties.AutomationId="RepeatPassword"/>
+  </StackPanel>
+  <TextBlock Text="{Binding Error}" Foreground="#AD3E30" Margin="0,8,0,12"/>
+  <Button Content="{Binding ActionLabel}" Command="{Binding Submit}" Style="{StaticResource Primary}" AutomationProperties.AutomationId="AuthSubmit"/>
+  <Button Content="{Binding ToggleLabel}" Command="{Binding Toggle}"/>
+  <TextBlock Text="Данные хранятся локально на этом компьютере. Учебный проект Стрехи Анны Владимировны." FontSize="12" Foreground="#66786A" Margin="0,16,0,0"/>
+ </StackPanel></ScrollViewer>
+</Window>
