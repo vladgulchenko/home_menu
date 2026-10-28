@@ -1,0 +1,15 @@
+flowchart TB
+    App[App.OnStartup / ShowLogin] --> Runtime[DatabaseRuntime.InitializeAsync]
+    Runtime --> Lease[InstanceLease до миграций]
+    Runtime --> EF[AppDbContext / InitialCreate / SeedData]
+    App --> Views[AuthWindow / MainWindow / EditorWindow]
+    Views --> VM[AuthViewModel / MainViewModel / EditorViewModel]
+    VM --> Contracts[Core: IAuthService / IProfileService / ICatalogService / IPantryService / IMenuService]
+    Contracts --> Facade[Infrastructure: HomeMenuService]
+    Facade --> Session[UserSession / SessionTicket]
+    Facade --> Gate[DatabaseRuntime.Gate / Revision]
+    Facade --> EF
+    EF --> SQLite[(SQLite: локальный файл)]
+    Facade --> Pure[Core: NutritionCalculator / RecipeCalculator / MenuGenerator / PantryAllocator / PlanAnalysis]
+    VM --> Dialog[IDialogService / DialogService]
+    Pure --> Models[Core: модели и DTO]

@@ -1,0 +1,77 @@
+erDiagram
+    Users ||--o{ PantryStocks : UserId
+    Users ||--o{ UserExcludedProducts : UserId
+    Users ||--o{ MenuPlans : UserId
+    Products ||--o{ PantryStocks : ProductId
+    Products ||--o{ UserExcludedProducts : ProductId
+    Products ||--o{ Ingredients : ProductId
+    Recipes ||--o{ Ingredients : RecipeId_CASCADE
+    Recipes ||--o{ WeeklyMenus : RecipeId_RESTRICT
+    MenuPlans ||--o{ WeeklyMenus : MenuPlanId_CASCADE
+    WeeklyMenus ||--o{ MenuIngredientSnapshots : WeeklyMenuId_CASCADE
+    Products ||--o{ MenuIngredientSnapshots : ProductId_RESTRICT
+    Users {
+      INTEGER Id PK
+      TEXT NormalizedLogin UK
+      TEXT PasswordHash
+      INTEGER HeightCmScaled
+      INTEGER WeightKgScaled
+      INTEGER WeeklyBudgetScaled
+    }
+    Products {
+      INTEGER Id PK
+      TEXT NormalizedName UK
+      INTEGER CaloriesPer100gScaled
+      INTEGER ProteinPer100gScaled
+      INTEGER FatPer100gScaled
+      INTEGER CarbsPer100gScaled
+      INTEGER PricePer100gScaled
+    }
+    Recipes {
+      INTEGER Id PK
+      TEXT Name
+      INTEGER MealType
+    }
+    Ingredients {
+      INTEGER Id PK
+      INTEGER RecipeId FK
+      INTEGER ProductId FK
+      INTEGER QuantityGramsScaled
+    }
+    PantryStocks {
+      INTEGER Id PK
+      INTEGER UserId FK
+      INTEGER ProductId FK
+      INTEGER QuantityGramsScaled
+      TEXT ExpiryDate
+    }
+    UserExcludedProducts {
+      INTEGER UserId PK,FK
+      INTEGER ProductId PK,FK
+    }
+    MenuPlans {
+      INTEGER Id PK
+      INTEGER UserId FK
+      TEXT WeekStart
+      INTEGER DailyCalorieTargetScaled
+      INTEGER ProteinTargetGramsScaled
+      INTEGER FatTargetGramsScaled
+      INTEGER CarbsTargetGramsScaled
+      INTEGER BudgetScaled
+      INTEGER Version
+    }
+    WeeklyMenus {
+      INTEGER Id PK
+      INTEGER MenuPlanId FK
+      INTEGER RecipeId FK
+      TEXT Date
+      INTEGER MealType
+      TEXT CookedAtUtc
+    }
+    MenuIngredientSnapshots {
+      INTEGER Id PK
+      INTEGER WeeklyMenuId FK
+      INTEGER ProductId FK
+      INTEGER QuantityGramsScaled
+      INTEGER PricePer100gScaled
+    }

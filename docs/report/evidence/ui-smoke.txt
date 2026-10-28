@@ -1,0 +1,35 @@
+2026-10-28T07:07:01.2447708+00:00
+Microsoft Windows NT 10.0.26200.0
+SQLite runtime 3.41.2
+PASS AuthWindow: loaded with PasswordBox controls; no user authentication automated
+PASS Initial catalogs and main bindings
+PASS Command enabled
+PASS Profile editor and nutrition targets: Демонстрация · Мужской · 20 лет · 175 см · 70 кг
+Активность: ×1,55 · бюджет 150,00 BYN/неделю
+Основной обмен 1698,75 ккал; суточная цель 2633,06 ккал
+Белки 197,48 г · жиры 87,77 г · углеводы 263,31 г
+Учебный расчет, не назначение диеты.; Готово; 
+PASS Command enabled
+PASS Product editor saves decimal comma
+PASS Command enabled
+PASS Recipe editor persists ingredients
+PASS Command enabled
+PASS Pantry editor persists lot
+PASS Command enabled
+PASS Command enabled
+PASS Generator command produces seven-day grid
+PASS 21 saved meals
+PASS Command enabled
+PASS Manual replacement command
+PASS Command enabled
+PASS Command enabled
+PASS Cancel cooking dialog leaves database unchanged
+PASS Command enabled
+PASS Cook command and statistics
+PASS Command enabled
+PASS Shopping and statistics refresh
+PASS Reopen database retains cooking
+PASS No errors from ViewModel commands
+PASS No WPF binding warnings/errors
+PASS Logout clears session and private collections
+DATABASE [???? ????????? ????????????? ?? ?????? ?? ????? ????]

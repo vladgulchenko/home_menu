@@ -1,0 +1,34 @@
+@startuml
+left to right direction
+actor "Пользователь" as User
+rectangle "HomeMenu — локальная установка" {
+  usecase "Регистрация / вход / выход" as Auth
+  usecase "Профиль и расчет норм" as Profile
+  usecase "Исключения продуктов" as Exclusions
+  usecase "Проверка исключений" as CheckExclusions
+  usecase "Общие продукты: CRUD и поиск" as Products
+  usecase "Общие рецепты: CRUD и фильтры" as Recipes
+  usecase "Учет партий и годности" as Pantry
+  usecase "Генерация недели / отмена" as Generate
+  usecase "Ручная замена блюда" as Replace
+  usecase "Подтверждение приготовления" as Cook
+  usecase "Атомарный FEFO-расход" as Fefo
+  usecase "Список дефицита по датам" as Shopping
+  usecase "Плановые КБЖУ и стоимость" as Stats
+}
+User --> Auth
+User --> Profile
+User --> Exclusions
+User --> Products
+User --> Recipes
+User --> Pantry
+User --> Generate
+User --> Replace
+User --> Cook
+User --> Shopping
+User --> Stats
+Cook ..> Fefo : <<include>>
+Generate ..> CheckExclusions : <<include>>
+Replace ..> CheckExclusions : <<include>>
+Cook ..> CheckExclusions : <<include>>
+@enduml

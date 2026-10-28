@@ -1,0 +1,94 @@
+classDiagram
+    class User {
+      int Id
+      string Login
+      string NormalizedLogin
+      string PasswordHash
+      Sex? Sex
+      int? Age
+      decimal? HeightCm
+      decimal? WeightKg
+      ActivityLevel? ActivityLevel
+      decimal WeeklyBudget
+    }
+    class Product {
+      int Id
+      string Name
+      string Category
+      decimal CaloriesPer100g
+      decimal ProteinPer100g
+      decimal FatPer100g
+      decimal CarbsPer100g
+      decimal PricePer100g
+    }
+    class Recipe {
+      int Id
+      string Name
+      MealType MealType
+      string Instructions
+      int CookingMinutes
+    }
+    class Ingredient {
+      int Id
+      int RecipeId
+      int ProductId
+      decimal QuantityGrams
+    }
+    class PantryStock {
+      int Id
+      int UserId
+      int ProductId
+      decimal QuantityGrams
+      DateOnly? ExpiryDate
+    }
+    class UserExcludedProduct {
+      int UserId
+      int ProductId
+    }
+    class MenuPlan {
+      int Id
+      int UserId
+      DateOnly WeekStart
+      decimal DailyCalorieTarget
+      decimal ProteinTargetGrams
+      decimal FatTargetGrams
+      decimal CarbsTargetGrams
+      decimal Budget
+      string ExcludedProductIdsJson
+      DateTime CreatedAtUtc
+      int Version
+    }
+    class WeeklyMenu {
+      int Id
+      int MenuPlanId
+      DateOnly Date
+      MealType MealType
+      int RecipeId
+      string RecipeNameSnapshot
+      string InstructionsSnapshot
+      DateTime? CookedAtUtc
+    }
+    class MenuIngredientSnapshot {
+      int Id
+      int WeeklyMenuId
+      int ProductId
+      string ProductNameSnapshot
+      string CategorySnapshot
+      decimal QuantityGrams
+      decimal CaloriesPer100g
+      decimal ProteinPer100g
+      decimal FatPer100g
+      decimal CarbsPer100g
+      decimal PricePer100g
+    }
+    User "1" --> "0..*" PantryStock
+    User "1" --> "0..*" UserExcludedProduct
+    User "1" --> "0..*" MenuPlan
+    Product "1" --> "0..*" PantryStock
+    Product "1" --> "0..*" UserExcludedProduct
+    Product "1" --> "0..*" Ingredient
+    Recipe "1" *-- "1..50" Ingredient
+    MenuPlan "1" *-- "21" WeeklyMenu : сервисная гарантия генерации
+    Recipe "1" --> "0..*" WeeklyMenu
+    WeeklyMenu "1" *-- "1..50" MenuIngredientSnapshot
+    Product "1" --> "0..*" MenuIngredientSnapshot
