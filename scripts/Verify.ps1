@@ -1,4 +1,4 @@
-﻿param([switch]$SkipUi, [switch]$SkipRestore, [switch]$ExportEvidence)
+param([switch]$SkipUi, [switch]$SkipRestore, [switch]$ExportEvidence)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $run = Join-Path $root ('artifacts\verification\' + [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ'))
@@ -19,7 +19,7 @@ function Run-Step([string]$name, [string[]]$arguments) {
 Push-Location $root
 try {
     $commit=(& git rev-parse HEAD).Trim()
-    $state=if(@(& git status --porcelain).Count -eq 0){'clean'}else{'dirty'}
+    $state=if(@(& git status --porcelain -- src tests scripts Directory.Build.props HomeMenu.sln dotnet-tools.json global.json).Count -eq 0){'clean'}else{'dirty'}
     if(-not $SkipRestore) { Run-Step 'restore' @('restore','HomeMenu.sln','--locked-mode') }
     Run-Step 'build' @('build','HomeMenu.sln','-c','Release','--no-restore','-warnaserror')
     Run-Step 'tests' @('test','tests/HomeMenu.Tests/HomeMenu.Tests.csproj','-c','Release','--no-build','--no-restore','--logger','trx;LogFileName=tests.trx','--results-directory',$run)
@@ -40,7 +40,7 @@ try {
             $groups += [pscustomobject]@{name=$name;passed=@($lines|Where-Object {$_ -match '^PASS '}).Count;failed=@($lines|Where-Object {$_ -match '^FAIL '}).Count}
         }
     }
-    $summary=[ordered]@{date_utc=[DateTime]::UtcNow.ToString('o');code_commit=$commit;source_state=$state;os=[Environment]::OSVersion.VersionString;sdk=(& dotnet --version).Trim();tests=[ordered]@{total=[int]$counts.total;passed=[int]$counts.passed;failed=[int]$counts.failed;skipped=[int]$counts.notExecuted};ui=$groups;manual='Native confirmation dialogs and physical PasswordBox input were not exercised.';steps=$steps.ToArray()}
+    $summary=[ordered]@{date_utc=[DateTime]::UtcNow.ToString('o');code_commit=$commit;source_state=$state;state_scope='src/tests/scripts/build configuration; report artifacts excluded';os=[Environment]::OSVersion.VersionString;sdk=(& dotnet --version).Trim();tests=[ordered]@{total=[int]$counts.total;passed=[int]$counts.passed;failed=[int]$counts.failed;skipped=[int]$counts.notExecuted};ui=$groups;manual='Native confirmation dialogs and physical PasswordBox input were not exercised.';steps=$steps.ToArray()}
     $summary | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $run 'summary.json') -Encoding UTF8
     & dotnet --info | Set-Content -LiteralPath (Join-Path $run 'environment.log') -Encoding UTF8
     if($ExportEvidence) {
