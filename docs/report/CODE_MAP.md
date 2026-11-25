@@ -1,6 +1,6 @@
 # Матрица требований и реализации
 
-Пути относительны корню. Реализованы R01–R16; ручная проверка T40/T41 частична,
+Пути относительны корню. Реализованы R01–R16; ручная часть T40 остаётся непроверенной; T41 проверен двумя процессами,
 автоматические подтверждения и ограничения перечислены в TEST_RESULTS.md.
 
 | ID | Реальные файлы и символы | Экран / команда | Проверки |
@@ -19,8 +19,8 @@
 | R12 | src/HomeMenu.Infrastructure/HomeMenuService.cs: BuildShoppingAsync, Shopping | MainWindow «Покупки»; MainViewModel.LoadWeek, LoadPlan, ShoppingHeader | ServiceTests.N4_ShoppingAcrossDatesCovers230Of280GramsWithoutWriting; ShoppingUsesCurrentPricesAndSkipsCookedMealsAndExpiredLots |
 | R13 | src/HomeMenu.Infrastructure/HomeMenuService.cs: GetWeekSummaryAsync; src/HomeMenu.Core/Models.cs: DaySummary, WeekSummary | MainWindow «Статистика»; MainViewModel.LoadPlan, SummaryText, Statistics | ServiceTests.ShoppingUsesCurrentPricesAndSkipsCookedMealsAndExpiredLots; UiSmoke statistics |
 | R14 | src/HomeMenu.Infrastructure/HomeMenuService.cs: Read, Write, Owned, Version; DatabaseRuntime.Gate, Revision; UserSession.Verify | CanExecute и Busy в MainViewModel; повторные проверки в сервисе | ServiceTests.OwnersCannotAccessForeignLotsPlansMealsOrExclusions; SqliteEnforcesScaledNumbersForeignKeysAndUniqueKeys; ConcurrencyTests.StaleInputChangedDuringSearchIsRejectedAndOldWeekSurvives, SessionSwitchDuringSearchDoesNotWriteForOldOrNewOwner, InstanceLeaseRejectsSecondThreadAndReleasesCleanly |
-| R15 | src/HomeMenu.Wpf/MainWindow.xaml, AuthWindow.xaml, EditorWindow.xaml; Mvvm.cs: ObservableObject, AsyncCommand; Editors.cs: DialogService, EditorViewModel; MainViewModel.Run | Все семь вкладок, вход, редакторы, отмена | tests/HomeMenu.UiSmoke/Program.cs: Main, FixtureDialogs, BindingTrace; ручные ограничения T40/T41 |
-| R16 | docs/report/*.md; docs/diagrams/*.mmd, use-cases.puml; scripts/ExportSchema.py | README и HANDOFF | Экспорт схемы реальной БД, перечень 40 xUnit cases, фактические логи и снимки |
+| R15 | src/HomeMenu.Wpf/MainWindow.xaml, AuthWindow.xaml, EditorWindow.xaml; Mvvm.cs: ObservableObject, AsyncCommand; Editors.cs: DialogService, EditorViewModel; MainViewModel.Run | Все семь вкладок, вход, редакторы, отмена | tests/HomeMenu.UiSmoke/Program.cs: Main, FixtureDialogs, BindingTrace; ручные ограничения T40 |
+| R16 | docs/report/*.md; docs/diagrams/*.mmd, use-cases.puml; scripts/ExportSchema.py | README и HANDOFF | Экспорт схемы реальной БД, перечень 62 xUnit cases, фактические логи и снимки |
 
 Весь код тестов логики находится в `tests/HomeMenu.Tests/`: CalculationsTests.cs,
 GeneratorTests.cs, ServiceTests.cs, ConcurrencyTests.cs, вспомогательные TestDatabase.cs.
@@ -31,3 +31,8 @@ GeneratorTests.cs, ServiceTests.cs, ConcurrencyTests.cs, вспомогател�
 IPreferenceService — в IProfileService, IShoppingListService/IStatisticsService —
 в IMenuService. Контракты объявлены в src/HomeMenu.Core/Models.cs; реализация — HomeMenuService.
 Отдельные generic repository, сервер, роли администратора и модули ПВЗ отсутствуют.
+
+
+## Уточнение 25.11.2026
+
+Регрессии сессии и транзакций: tests/HomeMenu.Tests/RegressionTests.cs. Перезапуск WPF App и блокировка процессов: tests/HomeMenu.UiSmoke/OperationalProbes.cs. App использует OnMainWindowClose; повторные вызовы Shutdown из закрываемых окон удалены. После SaveChanges перед Commit повторно проверяется SessionTicket.

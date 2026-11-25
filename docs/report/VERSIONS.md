@@ -12,7 +12,7 @@
 | SDK сборки | 10.0.103 |
 | Runtime приложения / тестов | .NET 8.0.24, WindowsDesktop.App 8.0.24 |
 | Прочие установленные SDK | 9.0.311 (для этой проверки не использован) |
-| OS | Windows 11, build 10.0.26200, x64 |
+| OS | Windows 11, build 10.0.26300, x64 |
 | SQLite native runtime | 3.41.2, SELECT sqlite_version() через Microsoft.Data.Sqlite |
 | dotnet-ef | 8.0.24, корневой dotnet-tools.json |
 | Visual Studio | 2022 по заданию; фактический запуск IDE не проверялся |
@@ -90,3 +90,7 @@ packages.lock.json и ниже; восстановление можно пров
 | xunit.extensibility.core | 2.9.2 |
 | xunit.extensibility.execution | 2.9.2 |
 | xunit.runner.visualstudio | 2.8.2 |
+
+## Повторная проверка 25.11.2026
+
+MSBuild из Visual Studio 2022 Community успешно собрал все пять проектов в Release. Интерактивная работа в IDE не проверялась. CLI использовал SDK 10.0.103 при целевой платформе .NET 8.

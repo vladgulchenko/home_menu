@@ -1,0 +1,14 @@
+﻿PASS First application process initializes SQLite
+PASS Production login route restores the user session
+PASS Command enabled
+PASS First process saves 21 meals and one cooking with version 2
+PASS Pantry retains the exact remaining grams without repeated spending
+PASS Production main window displays the saved seven-day menu and statistics
+PASS Second application process opens the saved database
+PASS Production login route restores the user session
+PASS Second process restores 21 meals and exactly one cooking
+PASS Pantry retains the exact remaining grams without repeated spending
+PASS Production main window displays the saved seven-day menu and statistics
+PASS Logout switches to login without terminating the application
+PASS Logout clears private menu, pantry and shopping collections
+restart: PASS, 13 checks.

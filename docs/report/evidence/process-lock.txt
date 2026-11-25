@@ -1,0 +1,4 @@
+﻿PASS Second process rejects the same database lock
+PASS Different database has an independent process lock
+PASS Released database lock can be acquired by another process
+process-lock: PASS, 3 checks.

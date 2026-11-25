@@ -122,3 +122,8 @@ Run централизует ошибки и состояние занятост
 
 Фактические проверки, их ограничения и перечень методов — TEST_RESULTS.md.
 Это материалы для будущих 3.1/3.2, а не уже согласованный Word-раздел.
+
+
+## Уточнение 25.11.2026
+
+Регрессии сессии и транзакций: tests/HomeMenu.Tests/RegressionTests.cs. Перезапуск WPF App и блокировка процессов: tests/HomeMenu.UiSmoke/OperationalProbes.cs. App использует OnMainWindowClose; повторные вызовы Shutdown из закрываемых окон удалены. После SaveChanges перед Commit повторно проверяется SessionTicket.

@@ -1,30 +1,27 @@
-# Фактические результаты проверок
+# Результаты проверки HomeMenu
 
-Дата: 28.10.2026. Среда всех приведенных запусков: Windows 11 x64, build 10.0.26200,
-SDK 10.0.103, .NET / WindowsDesktop runtime 8.0.24, SQLite runtime 3.41.2.
-Логические тесты используют отдельные реальные SQLite-файлы с MigrateAsync, не EF InMemory.
+Дата: 25.11.2026. Проверенный срез кода: `e745535541264b6fa99ad6d8d065d4d5ba6b0fbe`. Исполняемые исходники на момент проверки чистые. Последующий коммит содержит документацию и доказательства.
 
-Проверенный срез исходников и тестов: `eaca1373111486bccd7d6e03be66e960cd4fb828`.
-Документация и сохраненные evidence добавлены следующим коммитом; изменения
-производственного кода при разбиении на коммиты не вносились.
+Среда: Windows 10.0.26300, SDK 10.0.103, целевая платформа .NET 8, SQLite 3.41.2.
 
-## Команды
-
-| Команда | Результат |
+| Проверка | Результат |
 | --- | --- |
-| dotnet restore HomeMenu.sln | Успех, все 5 проектов |
-| dotnet restore HomeMenu.sln --locked-mode | Успех, lock-файлы согласованы |
-| dotnet build HomeMenu.sln -c Release --no-restore | Успех, 0 предупреждений / 0 ошибок |
-| dotnet test tests/HomeMenu.Tests -c Release --no-build --logger "trx;LogFileName=tests.trx" | 40 cases: 40 Passed, 0 Failed, 0 Skipped |
-| dotnet run --project tests/HomeMenu.UiSmoke -c Release --no-build | Успех, код 0; все проверки маршрута, 0 binding warnings/errors |
-| dotnet tool restore | dotnet-ef 8.0.24 восстановлен |
-| dotnet ef migrations list --project src/HomeMenu.Infrastructure --startup-project src/HomeMenu.Infrastructure | InitialCreate обнаружена; Pending относится к отдельному design-time пути, не рабочей БД |
-| dotnet ef migrations has-pending-model-changes --project src/HomeMenu.Infrastructure --startup-project src/HomeMenu.Infrastructure | No changes have been made to the model since the last migration |
-| Запуск HomeMenu.Wpf.exe с HOMEMENU_DATABASE_PATH=artifacts/startup-check.db | Созданы SQLite, миграция и seed; процесс отвечал. Ручной ввод входа не выполнялся |
+| Restore --locked-mode | Успешно |
+| Release build -warnaserror | Успешно |
+| xUnit, SQLite | 62 Passed, 0 Failed, 0 Skipped |
+| WPF smoke | 27 Passed |
+| Перезапуск настоящего WPF App в двух процессах | 13 Passed |
+| Межпроцессная блокировка БД | 3 Passed |
 
-Исходный результат xUnit: [evidence/tests.trx](evidence/tests.trx).
-WPF-лог: [evidence/ui-smoke.txt](evidence/ui-smoke.txt); из копии лога удален только
-локальный путь временной БД. Снимки действующих представлений: [../screenshots](../screenshots/README.md).
+Итого: 62 теста и 43 дополнительные проверки; это не измерение покрытия строк кода.
+
+Доказательства: [summary.json](evidence/summary.json), [62 случая](evidence/test-cases.csv), [UI](evidence/ui-smoke.txt), [перезапуск](evidence/restart.txt), [блокировка](evidence/process-lock.txt), [снимки](../screenshots/README.md). Полный TRX остаётся локально в игнорируемой папке artifacts/verification.
+
+Повторить: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Verify.ps1 -ExportEvidence`.
+
+Добавлены 22 регрессионных случая: неверный вход сбрасывает сессию; выход во время финального SaveChanges откатывает запись; неудачная замена рецепта и исключений сохраняет старые данные; реальная ошибка SQLite при приготовлении откатывает остатки и версию меню; проверяются операции без сессии, некорректная регистрация и соответствие модели миграциям.
+
+Исправлены сохранение прежней авторизации при неверном входе, запись после выхода во время сохранения и зависание закрытия главного окна при повторном Shutdown.
 
 ## Сценарии T01–T42
 
@@ -73,70 +70,11 @@ Passed означает только проверенный объем стро�
 | T37 | Passed | Тот же тест: достаточный запас дает пустой дефицит; UI начальное состояние без плана | Win | — |
 | T38 | Passed | ServiceTests.ShoppingUsesCurrentPricesAndSkipsCookedMealsAndExpiredLots; UI statistics: 1 приготовление, 500 ккал подтверждено в N2, 7 строк | Win | — |
 | T39 | Passed | ServiceTests.ManualReplacementRequiresConfirmationHonorsCategoryAndUnionOfExclusions: старый Version отклонен; конкурентный cook тоже проверяет Version | Win | — |
-| T40 | Partial / Manual NotRun | Реальные окна и команды UI прошли профиль → каталоги → партия → исключение → генерация → замена → покупки → отмена/приготовление → выход; bindings без ошибок | Win | PasswordBox и физические клики/MessageBox не автоматизировались; Computer Use native pipe недоступен |
-| T41 | Partial / Manual NotRun | UI и ServiceTests.MigrationsSeedAndReopenPreserveData: новый runtime/сеанс видят сохраненный план и приготовление | Win | Ручной перезапуск всего exe с повторным вводом пароля не пройден |
-| T42 | Passed (mutex) / process NotRun | ConcurrencyTests.InstanceLeaseRejectsSecondThreadAndReleasesCleanly: второй поток отвергнут, после освобождения захват успешен | Win | Диалог отказа второго продуктового процесса вручную не проверялся |
+| T40 | Partial / Manual NotRun | Реальные окна и команды UI прошли профиль → каталоги → партия → исключение → генерация → замена → покупки → отмена/приготовление → выход; bindings без ошибок | Win | PasswordBox и физические клики/MessageBox не автоматизировались; ручная проверка не проводилась |
+| T41 | Passed (processes) | OperationalProbes: два отдельных процесса WPF App; сохранены 21 приём пищи, приготовление, остатки, версия меню; выход очищает данные | Win | Физический ввод пароля не проверялся |
+| T42 | Passed (process lock) | Второй процесс для той же БД отклонён, другая БД разрешена, после освобождения повторный захват успешен | Win | Штатное сообщение вручную не проверялось |
 
-## Что проходило в WPF
 
-Отдельный executable UiSmoke создал случайную временную SQLite, открыл AuthWindow,
-реальные MainWindow и EditorWindow, передавал данные в те же ViewModels и AsyncCommand,
-которые использует продукт. Только диалоги подтверждения заменены FixtureDialogs.
-Учетная запись синтетическая; вход выполнялся напрямую сервисом тестовой фикстуры,
-а не автоматизацией пользовательского системного диалога.
+## Границы проверки
 
-Затем последовательно открыты все семь вкладок, сняты их фактические WPF-представления,
-проверены отсутствие сообщений об ошибках и WPF binding warnings/errors, выход
-и очистка приватных коллекций. Это автоматический маршрут, не ручная приемка.
-
-Ранние запуски нашли и помогли исправить XAML RowHeight="Auto" и защиту Closing
-при отсутствующем DataContext. Итоговые результаты относятся к исправленному коду.
-
-## Полный перечень выполненных xUnit cases
-
-Список ниже экспортирован из итогового TRX; параметризованные cases считаются отдельно.
-
-<!-- executed-cases -->
-
-| Case | ????????? |
-| --- | --- |
-| `HomeMenu.Tests.CalculationsTests.DecimalParsingIsUnambiguous(text: "1,5", expected: "1.5")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.DecimalParsingIsUnambiguous(text: "1.5", expected: "1.5")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.InvalidNumbersRejected(text: "1 500")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.InvalidNumbersRejected(text: "1,000.2")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.InvalidNumbersRejected(text: "Infinity")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.InvalidNumbersRejected(text: "NaN")` | Passed |
-| `HomeMenu.Tests.CalculationsTests.N1_ProfileFormulaAndAllActivities` | Passed |
-| `HomeMenu.Tests.CalculationsTests.N2_RecipeUsesOnePortionAndExactMoney` | Passed |
-| `HomeMenu.Tests.CalculationsTests.N4_FefoHonorsDatesAndDoesNotMutateLots` | Passed |
-| `HomeMenu.Tests.CalculationsTests.ValidationRejectsPrecisionDuplicateIngredientsAndInvalidMacros` | Passed |
-| `HomeMenu.Tests.ConcurrencyTests.CancelDuringBackgroundSearchDoesNotReplaceWeek` | Passed |
-| `HomeMenu.Tests.ConcurrencyTests.InstanceLeaseRejectsSecondThreadAndReleasesCleanly` | Passed |
-| `HomeMenu.Tests.ConcurrencyTests.SessionSwitchDuringSearchDoesNotWriteForOldOrNewOwner` | Passed |
-| `HomeMenu.Tests.ConcurrencyTests.StaleInputChangedDuringSearchIsRejectedAndOldWeekSurvives` | Passed |
-| `HomeMenu.Tests.GeneratorTests.CancellationDuringActualTreeTraversalReturnsNoPartialMenu` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DailyCalorieBoundsAreInclusive(calories: 179,99000000000001, status: NoSolution)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DailyCalorieBoundsAreInclusive(calories: 180, status: Success)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DailyCalorieBoundsAreInclusive(calories: 220, status: Success)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DailyCalorieBoundsAreInclusive(calories: 220,00999999999999, status: NoSolution)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DeterministicPriorityUsesRemainingSuitableLots` | Passed |
-| `HomeMenu.Tests.GeneratorTests.DistinguishesExclusionsNoSolutionAndCancellation` | Passed |
-| `HomeMenu.Tests.GeneratorTests.N3_ActualBacktrackFromPreferred900CalorieBreakfast` | Passed |
-| `HomeMenu.Tests.GeneratorTests.N3_ExactBudget21SlotsAndNoStockRequired` | Passed |
-| `HomeMenu.Tests.GeneratorTests.SearchLimitIsExact(limit: 0)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.SearchLimitIsExact(limit: 1)` | Passed |
-| `HomeMenu.Tests.GeneratorTests.SearchLimitIsExact(limit: 20)` | Passed |
-| `HomeMenu.Tests.ServiceTests.AuthNormalizesLoginHashesWithSaltAndClearsSession` | Passed |
-| `HomeMenu.Tests.ServiceTests.ConfirmationCannotApplyAfterRecipeOrPriceChanged` | Passed |
-| `HomeMenu.Tests.ServiceTests.CookingRollbackUsesSnapshotsAndRejectsFutureAndNewExclusions` | Passed |
-| `HomeMenu.Tests.ServiceTests.GenerationFailureCancellationAndSaveFailurePreserveOldWeek` | Passed |
-| `HomeMenu.Tests.ServiceTests.GenerationRequiresCompleteProfileMondayAndExplicitReplacement` | Passed |
-| `HomeMenu.Tests.ServiceTests.ManualReplacementRequiresConfirmationHonorsCategoryAndUnionOfExclusions` | Passed |
-| `HomeMenu.Tests.ServiceTests.MigrationsSeedAndReopenPreserveData` | Passed |
-| `HomeMenu.Tests.ServiceTests.N4_ShoppingAcrossDatesCovers230Of280GramsWithoutWriting` | Passed |
-| `HomeMenu.Tests.ServiceTests.N5_CookingIsAllOrNothingAndExactlyOnceConcurrently` | Passed |
-| `HomeMenu.Tests.ServiceTests.OwnersCannotAccessForeignLotsPlansMealsOrExclusions` | Passed |
-| `HomeMenu.Tests.ServiceTests.ProductCrudNormalizationFiltersAndReferenceProtection` | Passed |
-| `HomeMenu.Tests.ServiceTests.RecipeCrudCombinedFiltersAndValidation` | Passed |
-| `HomeMenu.Tests.ServiceTests.ShoppingUsesCurrentPricesAndSkipsCookedMealsAndExpiredLots` | Passed |
-| `HomeMenu.Tests.ServiceTests.SqliteEnforcesScaledNumbersForeignKeysAndUniqueKeys` | Passed |
+Окна и ViewModel настоящие; подтверждения в smoke подменены. Физический ввод PasswordBox и штатные диалоги вручную не проверялись. Ручной маршрут: [MANUAL_CHECKS.txt](MANUAL_CHECKS.txt).

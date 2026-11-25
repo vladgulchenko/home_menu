@@ -1,0 +1,70 @@
+﻿{
+    "date_utc":  "2026-11-25T11:47:05.0800773Z",
+    "code_commit":  "e745535541264b6fa99ad6d8d065d4d5ba6b0fbe",
+    "source_state":  "clean",
+    "state_scope":  "src/tests/scripts/build configuration; report artifacts excluded",
+    "os":  "Microsoft Windows NT 10.0.26300.0",
+    "sdk":  "10.0.103",
+    "tests":  {
+                  "total":  62,
+                  "passed":  62,
+                  "failed":  0,
+                  "skipped":  0
+              },
+    "ui":  [
+               {
+                   "name":  "ui-smoke",
+                   "passed":  27,
+                   "failed":  0
+               },
+               {
+                   "name":  "restart",
+                   "passed":  13,
+                   "failed":  0
+               },
+               {
+                   "name":  "process-lock",
+                   "passed":  3,
+                   "failed":  0
+               }
+           ],
+    "manual":  "Native confirmation dialogs and physical PasswordBox input were not exercised.",
+    "steps":  [
+                  {
+                      "name":  "restore",
+                      "command":  "dotnet restore HomeMenu.sln --locked-mode",
+                      "exit_code":  0,
+                      "seconds":  1.018
+                  },
+                  {
+                      "name":  "build",
+                      "command":  "dotnet build HomeMenu.sln -c Release --no-restore -warnaserror",
+                      "exit_code":  0,
+                      "seconds":  3.909
+                  },
+                  {
+                      "name":  "tests",
+                      "command":  "dotnet test tests/HomeMenu.Tests/HomeMenu.Tests.csproj -c Release --no-build --no-restore --logger trx;LogFileName=tests.trx --results-directory D:\\Studying\\3_semester\\SofrwareDesign\\coursework_anya\\code\\artifacts\\verification\\20261125T114640Z",
+                      "exit_code":  0,
+                      "seconds":  8.653
+                  },
+                  {
+                      "name":  "wpf",
+                      "command":  "dotnet tests/HomeMenu.UiSmoke/bin/Release/net8.0-windows/HomeMenu.UiSmoke.dll",
+                      "exit_code":  0,
+                      "seconds":  5.281
+                  },
+                  {
+                      "name":  "restart",
+                      "command":  "dotnet tests/HomeMenu.UiSmoke/bin/Release/net8.0-windows/HomeMenu.UiSmoke.dll --restart",
+                      "exit_code":  0,
+                      "seconds":  4.891
+                  },
+                  {
+                      "name":  "process-lock",
+                      "command":  "dotnet tests/HomeMenu.UiSmoke/bin/Release/net8.0-windows/HomeMenu.UiSmoke.dll --process-lock",
+                      "exit_code":  0,
+                      "seconds":  0.392
+                  }
+              ]
+}

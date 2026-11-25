@@ -69,7 +69,7 @@ dotnet run --project tests/HomeMenu.UiSmoke -c Release
 
 Полная проверка: `powershell -ExecutionPolicy Bypass -File scripts/Verify.ps1` (политика меняется только для процесса скрипта). Linux/macOS: тесты Core/Infrastructure запускаются отдельно; WPF требует Windows.
 
-Фактические результаты и границы UI-проверки — [TEST_RESULTS](docs/report/TEST_RESULTS.md). [Материалы для раздела 3](docs/report/IMPLEMENTATION.md), [карта требований](docs/report/CODE_MAP.md), [схема БД](docs/report/DATABASE.md). Word-отчет сейчас не создавался. Репозиторий: [vladgulchenko/home_menu](https://github.com/vladgulchenko/home_menu), ветка `main`. Проверенный срез кода и тестов: `eaca1373111486bccd7d6e03be66e960cd4fb828`; документация добавлена следующим коммитом.
+Фактические результаты и границы UI-проверки — [TEST_RESULTS](docs/report/TEST_RESULTS.md). [Материалы для раздела 3](docs/report/IMPLEMENTATION.md), [карта требований](docs/report/CODE_MAP.md), [схема БД](docs/report/DATABASE.md). Word-отчет сейчас не создавался. Репозиторий: [vladgulchenko/home_menu](https://github.com/vladgulchenko/home_menu), ветка `main`. Проверенный срез кода и тестов: `e745535541264b6fa99ad6d8d065d4d5ba6b0fbe`; результаты — docs/report/evidence/summary.json.
 
 ## ?????????? ? ??????
 

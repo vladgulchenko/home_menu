@@ -1,6 +1,6 @@
 # Снимки работающих WPF-представлений
 
-Получены 28.10.2026 на Windows 11 средствами `tests/HomeMenu.UiSmoke/Program.cs`,
+Получены 25.11.2026 на Windows 11 средствами `tests/HomeMenu.UiSmoke/Program.cs`,
 метод Capture: RenderTargetBitmap реально открытых окон после layout,
 в границах их WPF visual tree. Это не макеты и не снимки рабочего стола.
 Данные исключительно синтетические, учетных данных реального пользователя нет.

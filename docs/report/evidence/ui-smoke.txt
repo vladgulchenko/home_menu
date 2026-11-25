@@ -1,5 +1,5 @@
-2026-10-28T07:07:01.2447708+00:00
-Microsoft Windows NT 10.0.26200.0
+﻿2026-11-25T11:46:59.6103479+00:00
+Microsoft Windows NT 10.0.26300.0
 SQLite runtime 3.41.2
 PASS AuthWindow: loaded with PasswordBox controls; no user authentication automated
 PASS Initial catalogs and main bindings
@@ -32,4 +32,3 @@ PASS Reopen database retains cooking
 PASS No errors from ViewModel commands
 PASS No WPF binding warnings/errors
 PASS Logout clears session and private collections
-DATABASE [???? ????????? ????????????? ?? ?????? ?? ????? ????]
