@@ -10,3 +10,7 @@
 TestResults/
 artifacts/
 *.log
+
+# Local temporary files
+*.tmp
+/private/

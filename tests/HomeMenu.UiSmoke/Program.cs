@@ -13,12 +13,17 @@ using Microsoft.EntityFrameworkCore;
 namespace HomeMenu.UiSmoke;
 
 /// <summary>Runs the real views and ViewModel commands against an isolated test database; never touches the user's database.</summary>
-internal static class Program
+internal static partial class Program
 {
     private static readonly List<string> checks = [];
     [STAThread]
     private static int Main(string[] args)
     {
+        if (args.Length > 0 && args[0] is "--process-lock" or "--lock-child" or "--restart" or "--persist-write" or "--persist-read")
+        {
+            try { return Operational(args); }
+            catch (Exception ex) { Console.Error.WriteLine(ex); return 1; }
+        }
         System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("ru-RU");
         FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(System.Windows.Markup.XmlLanguage.GetLanguage("ru-RU")));
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };

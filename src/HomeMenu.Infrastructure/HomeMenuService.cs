@@ -30,7 +30,7 @@ public sealed class HomeMenuService(DatabaseRuntime runtime, UserSession session
             session.Verify(ticket);
             await using var db = runtime.CreateContext(); await using var tx = await db.Database.BeginTransactionAsync();
             var result = await action(db, ticket.UserId); session.Verify(ticket);
-            await db.SaveChangesAsync(); await tx.CommitAsync(); runtime.Revision++; return result;
+            await db.SaveChangesAsync(); session.Verify(ticket); await tx.CommitAsync(); runtime.Revision++; return result;
         }
         catch (DbUpdateConcurrencyException) { throw new BusinessException("Данные изменились. Обновите экран и повторите действие."); }
         catch (DbUpdateException ex) when (ex.InnerException is SqliteException { SqliteErrorCode: 5 or 6 }) { throw new BusinessException("База данных занята. Подождите и повторите действие."); }
@@ -60,6 +60,7 @@ public sealed class HomeMenuService(DatabaseRuntime runtime, UserSession session
         await runtime.Gate.WaitAsync();
         try
         {
+            session.Clear();
             await using var db = runtime.CreateContext(); var normalized = login.Trim().ToUpperInvariant();
             var user = await db.Users.SingleOrDefaultAsync(x => x.NormalizedLogin == normalized);
             if (user is null || hasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Failed)

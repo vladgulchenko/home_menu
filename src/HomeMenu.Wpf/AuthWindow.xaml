@@ -1,4 +1,4 @@
-<Window x:Class="HomeMenu.Wpf.AuthWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="HomeMenu — вход" Width="500" Height="710" MinHeight="600" WindowStartupLocation="CenterScreen" Closing="OnClosing">
+<Window x:Class="HomeMenu.Wpf.AuthWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="HomeMenu — вход" Width="500" Height="710" MinHeight="600" WindowStartupLocation="CenterScreen">
  <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="42,32">
   <TextBlock Text="HOME / MENU" Foreground="{StaticResource Accent}" FontWeight="Bold" FontSize="16" Margin="0,0,0,22"/>
   <TextBlock Text="Домашнее меню" FontSize="30" FontWeight="SemiBold"/>
